@@ -12,13 +12,20 @@ def get_ai_provider() -> AIProvider:
     if provider_name == "mock":
         from src.ai.mock_provider import MockProvider
         return MockProvider()
+
     if provider_name == "anthropic":
         from src.ai.anthropic_provider import AnthropicProvider
         return AnthropicProvider()
+
     if provider_name == "openai":
         from src.ai.openai_provider import OpenAIProvider
         return OpenAIProvider()
 
+    if provider_name == "gemini":
+        from src.ai.gemini_provider import GeminiProvider
+        return GeminiProvider()
+
     raise ValueError(
-        f"Unknown AI_PROVIDER '{provider_name}'. Expected one of: mock, anthropic, openai."
+        f"Unknown AI_PROVIDER '{provider_name}'. "
+        "Expected one of: mock, anthropic, openai, gemini."
     )
