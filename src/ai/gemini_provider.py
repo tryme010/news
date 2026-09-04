@@ -16,7 +16,7 @@ class GeminiProvider(AIProvider):
     def __init__(
         self,
         api_key: Optional[str] = None,
-        model: str = "gemini-3.7-flash",
+        model: Optional[str] = None,
     ):
         self._api_key = (
             api_key
@@ -30,7 +30,7 @@ class GeminiProvider(AIProvider):
                 "Set GEMINI_API_KEY in your environment / GitHub Secrets."
             )
 
-        self._model = model
+        self._model = model or os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
         self._url = (
             "https://generativelanguage.googleapis.com/"
             f"v1beta/models/{self._model}:generateContent"
