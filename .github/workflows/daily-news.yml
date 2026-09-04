@@ -1,0 +1,82 @@
+name: Daily News Automation
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Run in DRY_RUN mode (no Blogger drafts created)"
+        required: false
+        default: "false"
+      demo_mode:
+        description: "Run in DEMO_MODE (mocked data, no external APIs)"
+        required: false
+        default: "false"
+  schedule:
+    # Runs once per day. GitHub Actions cron does not guarantee exact timing,
+    # so avoid relying on the precise minute (spec section 36).
+    - cron: "17 3 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-news-automation
+  cancel-in-progress: false
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Restore persistent state
+        run: |
+          mkdir -p data logs
+          echo "Using repository-backed SQLite state at data/news.db (committed at end of run)."
+
+      - name: Run news pipeline
+        env:
+          AI_PROVIDER: ${{ vars.AI_PROVIDER || 'mock' }}
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+          SEARCH_PROVIDER: ${{ vars.SEARCH_PROVIDER }}
+          SEARCH_API_KEY: ${{ secrets.SEARCH_API_KEY }}
+          IMAGE_SEARCH_PROVIDER: ${{ vars.IMAGE_SEARCH_PROVIDER }}
+          IMAGE_SEARCH_API_KEY: ${{ secrets.IMAGE_SEARCH_API_KEY }}
+          IMAGE_GEN_PROVIDER: ${{ vars.IMAGE_GEN_PROVIDER }}
+          IMAGE_GEN_API_KEY: ${{ secrets.IMAGE_GEN_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+          DEMO_MODE: ${{ github.event.inputs.demo_mode || 'false' }}
+        run: python run.py
+
+      - name: Persist state back to repository
+        run: |
+          git config user.name "news-automation-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/news.db logs/ || true
+          git diff --cached --quiet || git commit -m "chore: persist pipeline state [skip ci]"
+          git push || echo "Nothing to push or push failed; check branch protection settings."
+
+      - name: Upload logs as workflow artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-logs
+          path: logs/
+          retention-days: 14

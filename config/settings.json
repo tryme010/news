@@ -1,0 +1,67 @@
+{
+  "daily_targets": {
+    "min_daily_articles": 70,
+    "target_daily_articles": 100,
+    "max_daily_articles": 150
+  },
+  "verification": {
+    "reject_below": 40,
+    "weak_below": 60,
+    "review_below": 75,
+    "good_below": 90,
+    "min_score_to_publish": 60,
+    "min_independent_sources_default": 1,
+    "min_independent_sources_sensitive": 2
+  },
+  "quality": {
+    "min_quality_score": 70,
+    "weights": {
+      "factual_accuracy": 0.25,
+      "source_quality": 0.15,
+      "recency": 0.1,
+      "originality": 0.15,
+      "readability": 0.1,
+      "editorial_relevance": 0.15,
+      "headline_quality": 0.05,
+      "duplicate_risk_penalty": 0.05
+    }
+  },
+  "article": {
+    "min_words": 500,
+    "max_words": 900,
+    "min_words_breaking": 250,
+    "language": "ar"
+  },
+  "recency": {
+    "preferred_hours": 24,
+    "acceptable_hours": 48
+  },
+  "deduplication": {
+    "similarity_threshold": 0.82,
+    "fingerprint_time_window_hours": 36
+  },
+  "distribution": {
+    "min_relevance_score_to_assign": 55,
+    "max_sites_per_event": 4,
+    "network_balance_weight": 0.15
+  },
+  "concurrency": {
+    "ai_calls": 3,
+    "blogger_calls": 2,
+    "search_calls": 5
+  },
+  "retry": {
+    "max_attempts": 3,
+    "base_delay_seconds": 2,
+    "max_delay_seconds": 30
+  },
+  "images": {
+    "allow_ai_generated_fallback": true,
+    "allow_missing_image": true
+  },
+  "rotation": {
+    "topics_per_run_min": 15,
+    "topics_per_run_max": 35,
+    "randomness_factor": 0.3
+  }
+}

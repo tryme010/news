@@ -1,0 +1,1150 @@
+[
+  {
+    "id": "topic_politics_arab",
+    "name": "Arab Politics & Government",
+    "keywords": [],
+    "regions": [
+      "Arab World",
+      "Gulf"
+    ],
+    "preferred_sites": [
+      "site_01",
+      "site_10"
+    ],
+    "priority": 9,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_politics_global",
+    "name": "Global Politics & Diplomacy",
+    "keywords": [],
+    "regions": [
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_01",
+      "site_10"
+    ],
+    "priority": 8,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_government_decisions",
+    "name": "Government Decisions & Policy",
+    "keywords": [],
+    "regions": [
+      "Arab World",
+      "Gulf"
+    ],
+    "preferred_sites": [
+      "site_01",
+      "site_10"
+    ],
+    "priority": 7,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_economy_global",
+    "name": "Global Economy",
+    "keywords": [],
+    "regions": [
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_02"
+    ],
+    "priority": 8,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_economy_arab",
+    "name": "Arab Economy",
+    "keywords": [],
+    "regions": [
+      "Arab World",
+      "Gulf"
+    ],
+    "preferred_sites": [
+      "site_02",
+      "site_10"
+    ],
+    "priority": 8,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_markets",
+    "name": "Stock Markets & Trading",
+    "keywords": [],
+    "regions": [
+      "Global",
+      "Gulf"
+    ],
+    "preferred_sites": [
+      "site_02"
+    ],
+    "priority": 7,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_companies",
+    "name": "Corporate News & Announcements",
+    "keywords": [],
+    "regions": [
+      "Global",
+      "Arab World"
+    ],
+    "preferred_sites": [
+      "site_02",
+      "site_03"
+    ],
+    "priority": 7,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_startups",
+    "name": "Startups & Venture Capital",
+    "keywords": [],
+    "regions": [
+      "Global",
+      "Arab World"
+    ],
+    "preferred_sites": [
+      "site_09",
+      "site_05",
+      "site_02"
+    ],
+    "priority": 8,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_ai",
+    "name": "Artificial Intelligence",
+    "keywords": [],
+    "regions": [
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_05",
+      "site_09"
+    ],
+    "priority": 9,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_technology",
+    "name": "Technology & Gadgets",
+    "keywords": [],
+    "regions": [
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_05"
+    ],
+    "priority": 7,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_cybersecurity",
+    "name": "Cybersecurity",
+    "keywords": [],
+    "regions": [
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_05"
+    ],
+    "priority": 6,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_science",
+    "name": "Science & Discovery",
+    "keywords": [],
+    "regions": [
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_04"
+    ],
+    "priority": 6,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_medicine",
+    "name": "Medicine & Healthcare Breakthroughs",
+    "keywords": [],
+    "regions": [
+      "Global",
+      "Arab World"
+    ],
+    "preferred_sites": [
+      "site_08",
+      "site_04"
+    ],
+    "priority": 7,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_education",
+    "name": "Education Policy & Developments",
+    "keywords": [],
+    "regions": [
+      "Arab World",
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_04"
+    ],
+    "priority": 6,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_universities",
+    "name": "Universities & Academic News",
+    "keywords": [],
+    "regions": [
+      "Arab World",
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_04"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_research",
+    "name": "Research Institutions & Studies",
+    "keywords": [],
+    "regions": [
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_04"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_sports_football",
+    "name": "Football",
+    "keywords": [],
+    "regions": [
+      "Arab World",
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_07"
+    ],
+    "priority": 8,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_sports_basketball",
+    "name": "Basketball",
+    "keywords": [],
+    "regions": [
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_07"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_sports_tennis",
+    "name": "Tennis",
+    "keywords": [],
+    "regions": [
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_07"
+    ],
+    "priority": 4,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_sports_business",
+    "name": "Sports Business & Deals",
+    "keywords": [],
+    "regions": [
+      "Global",
+      "Arab World"
+    ],
+    "preferred_sites": [
+      "site_07",
+      "site_02"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_entertainment",
+    "name": "Entertainment News",
+    "keywords": [],
+    "regions": [
+      "Arab World",
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_06"
+    ],
+    "priority": 6,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_cinema",
+    "name": "Cinema & Film Industry",
+    "keywords": [],
+    "regions": [
+      "Arab World",
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_06"
+    ],
+    "priority": 6,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_music",
+    "name": "Music Industry",
+    "keywords": [],
+    "regions": [
+      "Arab World",
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_06"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_books",
+    "name": "Books & Publishing",
+    "keywords": [],
+    "regions": [
+      "Arab World",
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_06"
+    ],
+    "priority": 4,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_culture",
+    "name": "Culture & Heritage",
+    "keywords": [],
+    "regions": [
+      "Arab World"
+    ],
+    "preferred_sites": [
+      "site_06"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_influencers",
+    "name": "Influencers & Content Creators",
+    "keywords": [],
+    "regions": [
+      "Arab World",
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_03",
+      "site_06"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_entrepreneurs",
+    "name": "Entrepreneurs & Founders",
+    "keywords": [],
+    "regions": [
+      "Arab World",
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_09",
+      "site_03"
+    ],
+    "priority": 7,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_ceos",
+    "name": "CEO Appointments & Leadership Moves",
+    "keywords": [],
+    "regions": [
+      "Global",
+      "Arab World"
+    ],
+    "preferred_sites": [
+      "site_03",
+      "site_02"
+    ],
+    "priority": 6,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_professionals",
+    "name": "Professionals: Doctors, Engineers, Academics",
+    "keywords": [],
+    "regions": [
+      "Arab World",
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_03"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_careers",
+    "name": "Careers & Employment Trends",
+    "keywords": [],
+    "regions": [
+      "Arab World",
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_09"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_leadership",
+    "name": "Business Leadership & Management",
+    "keywords": [],
+    "regions": [
+      "Global",
+      "Arab World"
+    ],
+    "preferred_sites": [
+      "site_09",
+      "site_02"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_social",
+    "name": "Social Developments & Trends",
+    "keywords": [],
+    "regions": [
+      "Arab World"
+    ],
+    "preferred_sites": [
+      "site_01"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_major_events",
+    "name": "Major Events & Developments",
+    "keywords": [],
+    "regions": [
+      "Global",
+      "Arab World"
+    ],
+    "preferred_sites": [
+      "site_01",
+      "site_10"
+    ],
+    "priority": 8,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_international_affairs",
+    "name": "International Affairs",
+    "keywords": [],
+    "regions": [
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_10",
+      "site_01"
+    ],
+    "priority": 7,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_transportation",
+    "name": "Transportation & Aviation",
+    "keywords": [],
+    "regions": [
+      "Global",
+      "Arab World"
+    ],
+    "preferred_sites": [
+      "site_01"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_energy",
+    "name": "Energy Sector",
+    "keywords": [],
+    "regions": [
+      "Gulf",
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_02",
+      "site_10"
+    ],
+    "priority": 7,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_climate",
+    "name": "Climate Change",
+    "keywords": [],
+    "regions": [
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_01",
+      "site_04"
+    ],
+    "priority": 6,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_environment",
+    "name": "Environment & Sustainability",
+    "keywords": [],
+    "regions": [
+      "Global",
+      "Arab World"
+    ],
+    "preferred_sites": [
+      "site_01",
+      "site_04"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_space",
+    "name": "Space Exploration",
+    "keywords": [],
+    "regions": [
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_04",
+      "site_05"
+    ],
+    "priority": 6,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_innovation",
+    "name": "Innovation & R&D",
+    "keywords": [],
+    "regions": [
+      "Global",
+      "Arab World"
+    ],
+    "preferred_sites": [
+      "site_05",
+      "site_09"
+    ],
+    "priority": 6,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_consumer_tech",
+    "name": "Consumer Technology Products",
+    "keywords": [],
+    "regions": [
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_05"
+    ],
+    "priority": 6,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_digital_economy",
+    "name": "Digital Economy & E-commerce",
+    "keywords": [],
+    "regions": [
+      "Global",
+      "Arab World"
+    ],
+    "preferred_sites": [
+      "site_02",
+      "site_05"
+    ],
+    "priority": 6,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_tourism",
+    "name": "Tourism & Travel",
+    "keywords": [],
+    "regions": [
+      "Arab World",
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_01",
+      "site_10"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_real_estate",
+    "name": "Real Estate & Property",
+    "keywords": [],
+    "regions": [
+      "Gulf",
+      "Arab World"
+    ],
+    "preferred_sites": [
+      "site_02"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_employment_market",
+    "name": "Labor Market & Jobs Report",
+    "keywords": [],
+    "regions": [
+      "Arab World",
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_02",
+      "site_09"
+    ],
+    "priority": 4,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_public_policy",
+    "name": "Public Policy & Regulation",
+    "keywords": [],
+    "regions": [
+      "Arab World",
+      "Global"
+    ],
+    "preferred_sites": [
+      "site_01"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_regional_gulf",
+    "name": "Gulf Regional Developments",
+    "keywords": [],
+    "regions": [
+      "Gulf"
+    ],
+    "preferred_sites": [
+      "site_10",
+      "site_01"
+    ],
+    "priority": 7,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_regional_egypt",
+    "name": "Egypt Developments",
+    "keywords": [],
+    "regions": [
+      "Egypt"
+    ],
+    "preferred_sites": [
+      "site_01",
+      "site_10"
+    ],
+    "priority": 6,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_regional_saudi",
+    "name": "Saudi Arabia Developments",
+    "keywords": [],
+    "regions": [
+      "Saudi Arabia",
+      "Gulf"
+    ],
+    "preferred_sites": [
+      "site_01",
+      "site_10"
+    ],
+    "priority": 7,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_regional_uae",
+    "name": "UAE Developments",
+    "keywords": [],
+    "regions": [
+      "UAE",
+      "Gulf"
+    ],
+    "preferred_sites": [
+      "site_01",
+      "site_10"
+    ],
+    "priority": 7,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_regional_qatar",
+    "name": "Qatar Developments",
+    "keywords": [],
+    "regions": [
+      "Qatar",
+      "Gulf"
+    ],
+    "preferred_sites": [
+      "site_01",
+      "site_10"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_regional_kuwait",
+    "name": "Kuwait Developments",
+    "keywords": [],
+    "regions": [
+      "Kuwait",
+      "Gulf"
+    ],
+    "preferred_sites": [
+      "site_10"
+    ],
+    "priority": 4,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_regional_bahrain",
+    "name": "Bahrain Developments",
+    "keywords": [],
+    "regions": [
+      "Bahrain",
+      "Gulf"
+    ],
+    "preferred_sites": [
+      "site_10"
+    ],
+    "priority": 3,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_regional_oman",
+    "name": "Oman Developments",
+    "keywords": [],
+    "regions": [
+      "Oman",
+      "Gulf"
+    ],
+    "preferred_sites": [
+      "site_10"
+    ],
+    "priority": 3,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_africa",
+    "name": "Africa News",
+    "keywords": [],
+    "regions": [
+      "Africa"
+    ],
+    "preferred_sites": [
+      "site_10",
+      "site_01"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_europe",
+    "name": "Europe News",
+    "keywords": [],
+    "regions": [
+      "Europe"
+    ],
+    "preferred_sites": [
+      "site_10",
+      "site_01"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_asia",
+    "name": "Asia News",
+    "keywords": [],
+    "regions": [
+      "Asia"
+    ],
+    "preferred_sites": [
+      "site_10",
+      "site_01"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_americas",
+    "name": "Americas News",
+    "keywords": [],
+    "regions": [
+      "Americas"
+    ],
+    "preferred_sites": [
+      "site_10",
+      "site_01"
+    ],
+    "priority": 5,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_conferences",
+    "name": "Conferences & Summits",
+    "keywords": [],
+    "regions": [
+      "Global",
+      "Arab World"
+    ],
+    "preferred_sites": [
+      "site_09",
+      "site_01"
+    ],
+    "priority": 4,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_awards",
+    "name": "Awards & Recognitions",
+    "keywords": [],
+    "regions": [
+      "Global",
+      "Arab World"
+    ],
+    "preferred_sites": [
+      "site_03",
+      "site_06"
+    ],
+    "priority": 4,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_health_public",
+    "name": "Public Health News",
+    "keywords": [],
+    "regions": [
+      "Global",
+      "Arab World"
+    ],
+    "preferred_sites": [
+      "site_08"
+    ],
+    "priority": 6,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_wellness",
+    "name": "Wellness & Lifestyle",
+    "keywords": [],
+    "regions": [
+      "Global",
+      "Arab World"
+    ],
+    "preferred_sites": [
+      "site_08"
+    ],
+    "priority": 4,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  },
+  {
+    "id": "topic_arts_design",
+    "name": "Design & Architecture",
+    "keywords": [],
+    "regions": [
+      "Global",
+      "Arab World"
+    ],
+    "preferred_sites": [
+      "site_06"
+    ],
+    "priority": 4,
+    "active": true,
+    "last_processed_at": null,
+    "frequency_hours": 24,
+    "recent_article_count": 0,
+    "recent_event_count": 0
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "id": "site_01",
+    "name": "General News",
+    "blogger_blog_id": "",
+    "editorial_focus": ["general_news", "current_events", "breaking_news"],
+    "regions": ["Egypt", "Gulf", "Arab World", "Global"],
+    "priority": 1,
+    "active": true
+  },
+  {
+    "id": "site_02",
+    "name": "Business & Economy",
+    "blogger_blog_id": "",
+    "editorial_focus": ["economy", "markets", "companies", "finance", "trade", "employment"],
+    "regions": ["Gulf", "Arab World", "Global"],
+    "priority": 2,
+    "active": true
+  },
+  {
+    "id": "site_03",
+    "name": "People & Personalities",
+    "blogger_blog_id": "",
+    "editorial_focus": ["public_figures", "executives", "professionals", "researchers", "creators"],
+    "regions": ["Arab World", "Global"],
+    "priority": 3,
+    "active": true
+  },
+  {
+    "id": "site_04",
+    "name": "Education & Knowledge",
+    "blogger_blog_id": "",
+    "editorial_focus": ["education", "universities", "research", "science", "learning"],
+    "regions": ["Arab World", "Global"],
+    "priority": 4,
+    "active": true
+  },
+  {
+    "id": "site_05",
+    "name": "Technology",
+    "blogger_blog_id": "",
+    "editorial_focus": ["ai", "software", "startups", "cybersecurity", "gadgets", "digital_transformation"],
+    "regions": ["Global", "Arab World"],
+    "priority": 5,
+    "active": true
+  },
+  {
+    "id": "site_06",
+    "name": "Culture & Arts",
+    "blogger_blog_id": "",
+    "editorial_focus": ["art", "entertainment", "books", "cinema", "music", "culture"],
+    "regions": ["Arab World", "Global"],
+    "priority": 6,
+    "active": true
+  },
+  {
+    "id": "site_07",
+    "name": "Sports",
+    "blogger_blog_id": "",
+    "editorial_focus": ["football", "basketball", "tennis", "athletes", "competitions", "sports_business"],
+    "regions": ["Arab World", "Global"],
+    "priority": 7,
+    "active": true
+  },
+  {
+    "id": "site_08",
+    "name": "Health & Life",
+    "blogger_blog_id": "",
+    "editorial_focus": ["health", "medicine", "wellness", "lifestyle", "public_health"],
+    "regions": ["Arab World", "Global"],
+    "priority": 8,
+    "active": true
+  },
+  {
+    "id": "site_09",
+    "name": "Entrepreneurship & Development",
+    "blogger_blog_id": "",
+    "editorial_focus": ["startups", "entrepreneurship", "leadership", "careers", "professional_development"],
+    "regions": ["Arab World", "Global"],
+    "priority": 9,
+    "active": true
+  },
+  {
+    "id": "site_10",
+    "name": "Arab & Global",
+    "blogger_blog_id": "",
+    "editorial_focus": ["arab_world", "international_affairs", "major_events"],
+    "regions": ["Arab World", "Gulf", "Global"],
+    "priority": 10,
+    "active": true
+  }
+]
