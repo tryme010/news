@@ -45,7 +45,7 @@ def generate_article(event: Dict, website: Dict, sources: List[Dict], ai: AIProv
 
     prompt = f"{template}\n\nEVENT + WEBSITE DATA:\n{json.dumps(payload, ensure_ascii=False)}"
 
-    result = ai.generate_json(prompt, max_tokens=2500, temperature=0.5)
+    result = ai.generate_json(prompt, max_tokens=5000, temperature=0.4)
 
     body = result.get("body", "")
     word_count = len(body.split())
