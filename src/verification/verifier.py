@@ -1,7 +1,7 @@
-"""AI-assisted verification of a candidate event group.
+"""AI-assisted verification of candidate event groups.
 
-Runs AFTER the cheap prefilter (scoring.py) to control AI cost. Produces
-the fields needed to populate the Event model and gate article generation.
+Runs after the cheap deterministic prefilter and uses AI as the final
+verification authority before article generation.
 """
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ from src.ai.base import AIProvider
 from src.verification.scoring import cheap_prefilter
 
 logger = logging.getLogger("news_bot.verification")
+
 
 STATUS_THRESHOLDS = [
     (40, "reject"),
@@ -35,63 +36,121 @@ def _load_prompt_template() -> str:
         return f.read()
 
 
-def verify_event_group(candidate_group: List[Dict], ai: AIProvider,
-                        min_score_to_publish: int = 60) -> Dict:
-    """Returns a dict describing verification outcome for one event group."""
+def _independent_source_count(candidate_group: List[Dict]) -> int:
+    """Count distinct source domains."""
+    return len({
+        str(source.get("domain", "")).strip().lower()
+        for source in candidate_group
+        if source.get("domain")
+    })
+
+
+def verify_event_group(
+    candidate_group: List[Dict],
+    ai: AIProvider,
+    min_score_to_publish: int = 60,
+) -> Dict:
+    """Return verification outcome for one candidate event group."""
+
     prefilter = cheap_prefilter(candidate_group)
+
     if not prefilter["passes"]:
         return {
             "verification_score": 0,
             "recommended_status": "reject",
             "reason": prefilter["reason"],
             "is_sensitive": prefilter.get("sensitive", False),
-            "independent_source_count": 0,
+            "independent_source_count": prefilter.get(
+                "unique_source_count", 0
+            ),
+            "passes_publish_bar": False,
         }
+
+    independent_count = _independent_source_count(candidate_group)
 
     sources_payload = [
         {
-            "url": s.get("url"),
-            "title": s.get("title"),
-            "summary": s.get("summary", "")[:500],
-            "domain": s.get("domain"),
-            "tier": s.get("source_tier"),
-            "published_at": s.get("published_at"),
+            "url": source.get("url"),
+            "title": source.get("title"),
+            "summary": source.get("summary", "")[:500],
+            "domain": source.get("domain"),
+            "tier": source.get("source_tier"),
+            "published_at": source.get("published_at"),
         }
-        for s in candidate_group
+        for source in candidate_group
     ]
+
     event_payload = {
         "title": candidate_group[0].get("title"),
         "sources": sources_payload,
         "is_sensitive_heuristic": prefilter.get("sensitive", False),
+        "independent_source_count": independent_count,
     }
 
     template = _load_prompt_template()
-    prompt = f"{template}\n\nEVENT DATA:\n{json.dumps(event_payload, ensure_ascii=False)}"
+
+    prompt = (
+        f"{template}\n\n"
+        "EVENT DATA:\n"
+        f"{json.dumps(event_payload, ensure_ascii=False)}"
+    )
 
     try:
         result = ai.verify(prompt)
     except Exception as exc:  # noqa: BLE001
-        logger.warning("AI verification failed, falling back to reject: %s", exc)
+        logger.warning(
+            "AI verification failed, falling back to reject: %s",
+            exc,
+        )
         return {
             "verification_score": 0,
             "recommended_status": "reject",
             "reason": f"ai_error: {exc}",
             "is_sensitive": prefilter.get("sensitive", False),
-            "independent_source_count": 0,
+            "independent_source_count": independent_count,
+            "passes_publish_bar": False,
         }
 
-    score = float(result.get("verification_score", 0))
-    status = result.get("recommended_status") or score_to_status(score)
+    try:
+        score = float(result.get("verification_score", 0))
+    except (TypeError, ValueError):
+        score = 0.0
 
-    if not result.get("is_real_event", False) or not result.get("sufficient_source_support", False):
+    score = max(0.0, min(100.0, score))
+
+    status = result.get("recommended_status")
+    if status not in {"reject", "weak", "review", "good", "strong"}:
+        status = score_to_status(score)
+
+    is_real_event = bool(result.get("is_real_event", False))
+    sufficient_support = bool(
+        result.get("sufficient_source_support", False)
+    )
+
+    # AI must confirm both reality and source support.
+    if not is_real_event or not sufficient_support:
         status = "reject"
         score = min(score, 39)
+
+    # Sensitive stories must retain independent-source protection even if
+    # the model accidentally returns an optimistic recommendation.
+    if prefilter.get("sensitive", False) and independent_count < 2:
+        status = "reject"
+        score = min(score, 39)
+
+    passes_publish_bar = (
+        score >= min_score_to_publish
+        and status not in {"reject", "weak"}
+    )
 
     return {
         "verification_score": score,
         "recommended_status": status,
         "reason": result.get("confidence_notes", ""),
-        "is_sensitive": result.get("is_sensitive", prefilter.get("sensitive", False)),
-        "independent_source_count": result.get("independent_source_count", len(candidate_group)),
-        "passes_publish_bar": score >= min_score_to_publish and status not in ("reject", "weak"),
+        "is_sensitive": result.get(
+            "is_sensitive",
+            prefilter.get("sensitive", False),
+        ),
+        "independent_source_count": independent_count,
+        "passes_publish_bar": passes_publish_bar,
     }

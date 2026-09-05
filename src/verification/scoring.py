@@ -1,45 +1,129 @@
-"""Deterministic pre-AI scoring rules: cheap heuristics applied BEFORE any
-AI verification call, to control cost (spec section 40: cost control /
-staged pipeline). Only candidates that pass this cheap filter get sent to
-the (more expensive) AI verifier.
+"""Deterministic pre-AI scoring rules.
+
+Cheap heuristics run before AI verification to control cost while avoiding
+unnecessary rejection of ordinary news from a single credible source.
 """
 from __future__ import annotations
 
 from typing import Dict, List
 
+
 SENSITIVE_KEYWORDS = [
-    "اتهام", "وفاة", "مقتل", "فضيحة", "احتيال", "اعتقال",
-    "accusation", "death", "killed", "scandal", "fraud", "arrest", "allegation",
+    # Arabic
+    "اتهام",
+    "اتهامات",
+    "وفاة",
+    "مقتل",
+    "قتيل",
+    "قتلى",
+    "فضيحة",
+    "احتيال",
+    "اعتقال",
+    "اعتقل",
+    "موقوف",
+    "اختلاس",
+    "فساد",
+    "إدانة",
+    "اغتيال",
+    "انفجار",
+    "هجوم",
+    "إصابة",
+    "إصابات",
+
+    # English
+    "accusation",
+    "accused",
+    "death",
+    "dead",
+    "killed",
+    "killing",
+    "scandal",
+    "fraud",
+    "arrest",
+    "arrested",
+    "allegation",
+    "allegations",
+    "corruption",
+    "murder",
+    "assassination",
+    "explosion",
+    "attack",
+    "injured",
+    "injuries",
 ]
 
 
 def is_sensitive(title: str, summary: str = "") -> bool:
     text = f"{title} {summary}".lower()
-    return any(kw in text for kw in SENSITIVE_KEYWORDS)
+    return any(keyword in text for keyword in SENSITIVE_KEYWORDS)
 
 
-def cheap_prefilter(candidate_group: List[Dict], min_sources: int = 1,
-                     min_avg_credibility: float = 0.3) -> Dict:
-    """Return a dict with a pass/fail decision and reasoning, without any AI call."""
-    sources = candidate_group
-    if not sources:
-        return {"passes": False, "reason": "no_sources"}
+def _unique_domains(candidate_group: List[Dict]) -> set[str]:
+    return {
+        str(source.get("domain", "")).strip().lower()
+        for source in candidate_group
+        if source.get("domain")
+    }
 
-    unique_domains = {s.get("domain", "") for s in sources if s.get("domain")}
-    avg_credibility = sum(s.get("credibility_score", 0.0) for s in sources) / len(sources)
 
-    title = sources[0].get("title", "")
-    summary = sources[0].get("summary", "")
-    sensitive = is_sensitive(title, summary)
-
-    required_sources = 2 if sensitive else min_sources
-    if len(unique_domains) < required_sources and len(sources) < required_sources:
+def cheap_prefilter(
+    candidate_group: List[Dict],
+    min_sources: int = 1,
+    min_avg_credibility: float = 0.3,
+) -> Dict:
+    """Return a cheap pass/fail decision before calling the AI verifier."""
+    if not candidate_group:
         return {
             "passes": False,
-            "reason": f"insufficient_source_diversity (need {required_sources}, have {len(unique_domains)})",
-            "sensitive": sensitive,
+            "reason": "no_sources",
+            "sensitive": False,
         }
-    if avg_credibility < min_avg_credibility:
-        return {"passes": False, "reason": "low_avg_credibility", "sensitive": sensitive}
 
-    return {"passes": True, "reason": "ok", "sensitive": sensitive, "avg_credibility": avg_credibility}
+    unique_domains = _unique_domains(candidate_group)
+
+    credibility_values = [
+        float(source.get("credibility_score", 0.0))
+        for source in candidate_group
+    ]
+    avg_credibility = (
+        sum(credibility_values) / len(credibility_values)
+        if credibility_values
+        else 0.0
+    )
+
+    title = candidate_group[0].get("title", "")
+    summary = candidate_group[0].get("summary", "")
+    sensitive = is_sensitive(title, summary)
+
+    # Sensitive stories require independent source diversity before
+    # spending an AI verification call.
+    required_sources = 2 if sensitive else max(1, min_sources)
+
+    if len(unique_domains) < required_sources:
+        return {
+            "passes": False,
+            "reason": (
+                "insufficient_source_diversity "
+                f"(need {required_sources}, have {len(unique_domains)})"
+            ),
+            "sensitive": sensitive,
+            "unique_source_count": len(unique_domains),
+            "avg_credibility": avg_credibility,
+        }
+
+    if avg_credibility < min_avg_credibility:
+        return {
+            "passes": False,
+            "reason": "low_avg_credibility",
+            "sensitive": sensitive,
+            "unique_source_count": len(unique_domains),
+            "avg_credibility": avg_credibility,
+        }
+
+    return {
+        "passes": True,
+        "reason": "ok",
+        "sensitive": sensitive,
+        "unique_source_count": len(unique_domains),
+        "avg_credibility": avg_credibility,
+    }
