@@ -30,11 +30,98 @@ class GeminiProvider(AIProvider):
                 "Set GEMINI_API_KEY in your environment / GitHub Secrets."
             )
 
-        self._model = model or os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
-        self._url = (
-            "https://generativelanguage.googleapis.com/"
-            f"v1beta/models/{self._model}:generateContent"
+        selected_model = model or os.environ.get(
+            "GEMINI_MODEL",
+            "gemini-3.6-flash",
         )
+
+        fallback_models = os.environ.get(
+            "GEMINI_FALLBACK_MODELS",
+            "gemini-3.6-flash,gemini-3.5-flash,gemini-3.1-flash-lite",
+        ).split(",")
+
+        self._models = []
+        for candidate in [selected_model, *fallback_models]:
+            candidate = candidate.strip()
+            if candidate and candidate not in self._models:
+                self._models.append(candidate)
+
+    def _generate_with_model(
+        self,
+        model: str,
+        prompt: str,
+        *,
+        system: Optional[str],
+        max_tokens: int,
+        temperature: float,
+    ) -> str:
+        url = (
+            "https://generativelanguage.googleapis.com/"
+            f"v1beta/models/{model}:generateContent"
+        )
+
+        payload = {
+            "contents": [
+                {
+                    "role": "user",
+                    "parts": [{"text": prompt}],
+                }
+            ],
+            "generationConfig": {
+                "temperature": temperature,
+                "maxOutputTokens": max(max_tokens, 2000),
+            },
+        }
+
+        if "json" in prompt.lower():
+            payload["generationConfig"]["responseMimeType"] = (
+                "application/json"
+            )
+
+        if system:
+            payload["systemInstruction"] = {
+                "parts": [{"text": system}],
+            }
+
+        response = requests.post(
+            url,
+            headers={
+                "x-goog-api-key": self._api_key,
+                "Content-Type": "application/json",
+            },
+            json=payload,
+            timeout=90,
+        )
+
+        response.raise_for_status()
+        data = response.json()
+
+        candidates = data.get("candidates") or []
+        if not candidates:
+            raise RuntimeError(
+                f"Gemini returned no candidates for {model}: {data}"
+            )
+
+        parts = (
+            candidates[0]
+            .get("content", {})
+            .get("parts", [])
+        )
+
+        text = "".join(
+            part.get("text", "")
+            for part in parts
+            if isinstance(part, dict)
+        ).strip()
+
+        if not text:
+            finish_reason = candidates[0].get("finishReason", "")
+            raise RuntimeError(
+                f"Gemini returned an empty response for {model}. "
+                f"finishReason={finish_reason}: {data}"
+            )
+
+        return text
 
     def generate(
         self,
@@ -44,69 +131,38 @@ class GeminiProvider(AIProvider):
         max_tokens: int = 2000,
         temperature: float = 0.4,
     ) -> str:
+        last_error: Optional[Exception] = None
 
-        def _call() -> str:
-            contents = []
+        for model in self._models:
+            try:
+                return retry_with_backoff(
+                    lambda: self._generate_with_model(
+                        model,
+                        prompt,
+                        system=system,
+                        max_tokens=max_tokens,
+                        temperature=temperature,
+                    )
+                )
+            except requests.HTTPError as exc:
+                last_error = exc
 
-            if system:
-                contents.append(
-                    {
-                        "role": "user",
-                        "parts": [{"text": system}],
-                    }
+                status = (
+                    exc.response.status_code
+                    if exc.response is not None
+                    else None
                 )
 
-            contents.append(
-                {
-                    "role": "user",
-                    "parts": [{"text": prompt}],
-                }
-            )
+                if status in (429, 500, 502, 503, 504):
+                    continue
 
-            payload = {
-                "contents": contents,
-                "generationConfig": {
-                    "temperature": temperature,
-                    "maxOutputTokens": max_tokens,
-                },
-            }
+                raise
+            except RuntimeError as exc:
+                last_error = exc
+                continue
 
-            response = requests.post(
-                self._url,
-                headers={
-                    "x-goog-api-key": self._api_key,
-                    "Content-Type": "application/json",
-                },
-                json=payload,
-                timeout=90,
-            )
-
-            response.raise_for_status()
-            data = response.json()
-
-            candidates = data.get("candidates") or []
-            if not candidates:
-                raise RuntimeError(
-                    f"Gemini returned no candidates: {data}"
-                )
-
-            parts = (
-                candidates[0]
-                .get("content", {})
-                .get("parts", [])
-            )
-
-            text = "".join(
-                part.get("text", "")
-                for part in parts
-                if isinstance(part, dict)
-            ).strip()
-
-            if not text:
-                raise RuntimeError(
-                    f"Gemini returned an empty response: {data}"
-                )
-
-            return text
-
-        return retry_with_backoff(_call)
+        raise RuntimeError(
+            "All configured Gemini models failed. "
+            f"Models tried: {', '.join(self._models)}. "
+            f"Last error: {last_error}"
+        )
