@@ -2,7 +2,7 @@
   "daily_targets": {
     "min_daily_articles": 70,
     "target_daily_articles": 100,
-    "max_daily_articles": 150
+    "max_daily_articles": 5
   },
   "verification": {
     "reject_below": 40,
