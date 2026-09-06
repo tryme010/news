@@ -23,3 +23,16 @@ Return ONLY a JSON object (no prose, no markdown fences) with this exact shape:
   "entities": ["..."],
   "editorial_angle": "..."
 }
+
+
+EDITORIAL HTML FORMATTING:
+- Return the article body as clean Blogger-compatible HTML, not Markdown.
+- Use <h2> for major section headings and <h3> for useful subsections.
+- Use <p> for normal paragraphs.
+- Use <strong> only for genuinely important names, figures, dates, decisions, and key facts; do not overuse it.
+- Use <ul><li> for short lists when they improve readability.
+- Create a visually polished news-magazine layout with clear hierarchy, spacing, and varied heading sizes through semantic HTML.
+- Do not use inline CSS, JavaScript, external fonts, or external stylesheets.
+- Do not use excessive colors, emojis, ALL CAPS, or decorative elements.
+- Never put the source name, source URL, attribution line, or "المصدر:" in the article body.
+- Keep factual content intact while making the wording and structure original.

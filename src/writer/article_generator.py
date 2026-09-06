@@ -6,6 +6,8 @@ original prose, length constraints, no fabrication.
 from __future__ import annotations
 
 import json
+import html
+import re
 import logging
 from typing import Dict, List
 
@@ -17,6 +19,38 @@ logger = logging.getLogger("news_bot.writer.article_generator")
 def _load_prompt_template() -> str:
     with open("config/prompts/article.txt", "r", encoding="utf-8") as f:
         return f.read()
+
+
+def _ensure_blogger_html(body: str) -> str:
+    """Ensure article body is safe, semantic Blogger-compatible HTML."""
+    if not body:
+        return body
+    body = body.strip()
+    # If the model already returned semantic HTML, keep it.
+    if re.search(r"<(p|h2|h3|ul|ol|blockquote)\b", body, flags=re.I):
+        return body
+    # Convert simple Markdown headings/lists and paragraphs to HTML.
+    lines = [ln.strip() for ln in body.splitlines() if ln.strip()]
+    out = []
+    for ln in lines:
+        if ln.startswith("### "):
+            out.append(f"<h3>{html.escape(ln[4:])}</h3>")
+        elif ln.startswith("## "):
+            out.append(f"<h2>{html.escape(ln[3:])}</h2>")
+        elif re.match(r"^[-*]\s+", ln):
+            if not out or not out[-1].startswith("<ul>"):
+                out.append("<ul>")
+            out.append(f"<li>{html.escape(re.sub(r'^[-*]\s+', '', ln))}</li>")
+        else:
+            if out and out[-1] == "</ul>":
+                out.append(f"<p>{html.escape(ln)}</p>")
+            else:
+                out.append(f"<p>{html.escape(ln)}</p>")
+    if "<ul>" in out:
+        # close any open list
+        if out[-1] != "</ul>":
+            out.append("</ul>")
+    return "".join(out)
 
 
 def generate_article(event: Dict, website: Dict, sources: List[Dict], ai: AIProvider,

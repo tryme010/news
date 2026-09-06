@@ -175,3 +175,30 @@ verify reruns don't duplicate output).
   `src/discovery/search_engine.py` as needed.
 - Persistence is repository-committed SQLite, fine for the target volume;
   swap for a hosted DB if you scale beyond ~thousands of rows.
+
+
+## GitHub update commands (Windows CMD)
+
+From:
+`C:\Users\karim\Downloads\news-automation-bot\news-automation-bot`
+
+Run:
+
+```cmd
+git status
+git add .
+git commit -m "Improve article formatting and hide news source"
+git pull --rebase origin main
+git push origin main
+```
+
+If Git asks for a conflict during rebase:
+```cmd
+git status
+```
+Resolve the listed file(s), then:
+```cmd
+git add .
+git rebase --continue
+git push origin main
+```
