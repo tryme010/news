@@ -21,5 +21,6 @@ Rules:
 - Do not assume facts not present in the provided sources.
 - If claims conflict between sources, lower the score and note it.
 - Treat unconfirmed/rumor/anonymous-claim stories as sensitive and require multiple independent, credible sources.
+- For ordinary, non-sensitive news, one direct and credible Tier 1-3 source may be sufficient when the source clearly reports a concrete recent event and there is no contradiction in the supplied data. Do not reject ordinary news merely because a second source is absent.
 - Sensitive categories (accusations, deaths, criminal allegations, health claims, financial fraud claims, political scandals) require a higher bar: at least 2 independent Tier 1-3 sources.
 - Never invent source support that isn't in the input.

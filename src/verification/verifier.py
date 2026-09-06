@@ -67,6 +67,11 @@ def verify_event_group(
         }
 
     independent_count = _independent_source_count(candidate_group)
+    credible_independent_count = len({
+        str(source.get("domain", "")).strip().lower()
+        for source in candidate_group
+        if source.get("domain") and int(source.get("source_tier", 4)) <= 3
+    })
 
     sources_payload = [
         {
@@ -128,13 +133,23 @@ def verify_event_group(
     )
 
     # AI must confirm both reality and source support.
+    rejection_reasons = []
+    if not is_real_event:
+        rejection_reasons.append("ai_did_not_confirm_real_event")
+    if not sufficient_support:
+        rejection_reasons.append("ai_did_not_confirm_sufficient_source_support")
+
     if not is_real_event or not sufficient_support:
         status = "reject"
         score = min(score, 39)
 
     # Sensitive stories must retain independent-source protection even if
     # the model accidentally returns an optimistic recommendation.
-    if prefilter.get("sensitive", False) and independent_count < 2:
+    if prefilter.get("sensitive", False) and credible_independent_count < 2:
+        rejection_reasons.append(
+            "sensitive_story_requires_2_independent_tier1_3_domains_"
+            f"have_{credible_independent_count}"
+        )
         status = "reject"
         score = min(score, 39)
 
@@ -143,10 +158,20 @@ def verify_event_group(
         and status not in {"reject", "weak"}
     )
 
+    if score < min_score_to_publish:
+        rejection_reasons.append(f"score_below_publish_threshold_{min_score_to_publish}")
+    if status in {"reject", "weak"}:
+        rejection_reasons.append(f"status_{status}")
+
+    reason_parts = [r for r in rejection_reasons if r]
+    model_note = str(result.get("confidence_notes", "")).strip()
+    if model_note:
+        reason_parts.append(f"ai_note:{model_note}")
+
     return {
         "verification_score": score,
         "recommended_status": status,
-        "reason": result.get("confidence_notes", ""),
+        "reason": "; ".join(reason_parts) or "passed_publish_bar",
         "is_sensitive": result.get(
             "is_sensitive",
             prefilter.get("sensitive", False),

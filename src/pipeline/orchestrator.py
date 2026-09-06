@@ -112,11 +112,31 @@ def run_pipeline(dry_run: bool = False, demo_mode: bool = False, db_path: str = 
         if not group:
             continue
         verdict = verify_event_group(group, ai, verification_cfg["min_score_to_publish"])
+        rep = group[0]
+        domains = sorted({str(c.get("domain", "")).strip().lower() for c in group if c.get("domain")})
         if not verdict.get("passes_publish_bar", False):
             rejected_count += 1
+            logger.warning(
+                "REJECTED EVENT: title=%r score=%s status=%s sensitive=%s "
+                "independent_domains=%d domains=%s reason=%s",
+                rep.get("title", ""),
+                verdict.get("verification_score", 0),
+                verdict.get("recommended_status", "reject"),
+                verdict.get("is_sensitive", False),
+                verdict.get("independent_source_count", len(domains)),
+                ",".join(domains) or "none",
+                verdict.get("reason", "unknown"),
+            )
             continue
 
-        rep = group[0]
+        logger.info(
+            "VERIFIED EVENT: title=%r score=%s status=%s sensitive=%s "
+            "independent_domains=%d domains=%s",
+            rep.get("title", ""), verdict.get("verification_score", 0),
+            verdict.get("recommended_status", ""), verdict.get("is_sensitive", False),
+            verdict.get("independent_source_count", len(domains)), ",".join(domains) or "none",
+        )
+
         source_ids = []
         for cand in group:
             src = Source(

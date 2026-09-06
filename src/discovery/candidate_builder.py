@@ -49,33 +49,75 @@ def _candidate_text(item: Dict) -> str:
     return " ".join(str(part) for part in parts if part).lower()
 
 
+TOPIC_ALIASES = {
+    "topic_politics_arab": ["arab", "arab world", "middle east", "government", "president", "minister"],
+    "topic_politics_global": ["politics", "president", "election", "elections", "diplomacy", "parliament", "government"],
+    "topic_economy_global": ["economy", "economic", "inflation", "gdp", "interest rates", "central bank"],
+    "topic_economy_arab": ["arab economy", "middle east economy", "gulf economy"],
+    "topic_markets": ["stocks", "stock market", "shares", "trading", "wall street", "market"],
+    "topic_companies": ["company", "companies", "corporate", "business", "earnings", "acquisition", "merger"],
+    "topic_startups": ["startup", "startups", "venture capital", "funding", "seed round", "series a", "series b"],
+    "topic_ai": ["artificial intelligence", "ai", "machine learning", "chatbot", "llm", "openai", "gemini"],
+    "topic_technology": ["technology", "tech", "software", "gadgets", "device", "smartphone"],
+    "topic_cybersecurity": ["cybersecurity", "cyber attack", "hack", "hacker", "ransomware", "data breach"],
+    "topic_science": ["science", "scientist", "discovery", "research", "study"],
+    "topic_medicine": ["medicine", "medical", "healthcare", "drug", "vaccine", "clinical trial"],
+    "topic_sports_football": ["football", "soccer", "premier league", "champions league"],
+    "topic_sports_basketball": ["basketball", "nba"],
+    "topic_sports_tennis": ["tennis", "wimbledon", "us open", "roland garros"],
+    "topic_entertainment": ["entertainment", "celebrity", "actor", "actress", "star"],
+    "topic_cinema": ["film", "movie", "cinema", "box office"],
+    "topic_music": ["music", "singer", "album", "concert"],
+    "topic_tourism": ["tourism", "travel", "tourist", "hotel", "flight"],
+    "topic_real_estate": ["real estate", "property", "housing", "home prices"],
+    "topic_energy": ["energy", "oil", "gas", "opec", "electricity", "renewable"],
+    "topic_climate": ["climate", "global warming", "emissions", "carbon"],
+    "topic_environment": ["environment", "sustainability", "pollution", "wildlife"],
+    "topic_space": ["space", "nasa", "rocket", "satellite", "astronaut"],
+    "topic_transportation": ["transport", "aviation", "airline", "airport", "shipping", "railway"],
+    "topic_digital_economy": ["e-commerce", "ecommerce", "digital economy", "online shopping", "fintech"],
+    "topic_public_policy": ["policy", "regulation", "regulator", "law", "legislation"],
+    "topic_africa": ["africa", "african", "nigeria", "kenya", "south africa", "egypt"],
+    "topic_europe": ["europe", "european", "eu", "european union", "ukraine", "germany", "france"],
+    "topic_asia": ["asia", "asian", "china", "japan", "india", "south korea", "indonesia"],
+    "topic_americas": ["america", "american", "united states", "usa", "canada", "brazil", "mexico"],
+    "topic_regional_gulf": ["gulf", "gcc", "saudi", "uae", "qatar", "kuwait", "bahrain", "oman"],
+    "topic_regional_egypt": ["egypt", "egyptian", "cairo"],
+    "topic_regional_saudi": ["saudi", "saudi arabia", "riyadh"],
+    "topic_regional_uae": ["uae", "dubai", "abu dhabi", "emirates"],
+    "topic_regional_qatar": ["qatar", "doha"],
+    "topic_regional_kuwait": ["kuwait"],
+    "topic_regional_bahrain": ["bahrain", "manama"],
+    "topic_regional_oman": ["oman", "muscat"],
+}
+
+
 def _assign_rss_topic(item: Dict, topics: List[Dict]) -> Dict | None:
-    """Assign an RSS candidate to the best matching topic.
-
-    If no meaningful topic match exists, return None instead of duplicating
-    the candidate across every topic.
-    """
+    """Assign an RSS candidate to the best relevant selected topic."""
     text = _candidate_text(item)
-
     best_topic: Dict | None = None
     best_score = 0
 
     for topic in topics:
         topic_text = _topic_text(topic)
-        if not topic_text:
-            continue
-
-        topic_terms = {
+        topic_id = topic.get("id", "")
+        aliases = TOPIC_ALIASES.get(topic_id, [])
+        terms = set(aliases)
+        terms.update(
             term.strip()
             for term in topic_text.split()
-            if len(term.strip()) >= 4
-        }
-
-        score = sum(1 for term in topic_terms if term in text)
-
+            if len(term.strip()) >= 5 and term.strip() not in {"news", "global", "arab"}
+        )
+        score = sum(1 for term in terms if term and term in text)
         if score > best_score:
             best_score = score
             best_topic = topic
+
+    # A world-news feed is allowed a conservative fallback to international
+    # affairs, but only when that topic is part of this run's selected set.
+    if best_topic is None and item.get("feed_topic_hint"):
+        hint_id = item["feed_topic_hint"]
+        best_topic = next((t for t in topics if t.get("id") == hint_id), None)
 
     return best_topic
 

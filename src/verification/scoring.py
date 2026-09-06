@@ -98,6 +98,11 @@ def cheap_prefilter(
     # Sensitive stories require independent source diversity before
     # spending an AI verification call.
     required_sources = 2 if sensitive else max(1, min_sources)
+    credible_domains = {
+        str(source.get("domain", "")).strip().lower()
+        for source in candidate_group
+        if source.get("domain") and int(source.get("source_tier", 4)) <= 3
+    }
 
     if len(unique_domains) < required_sources:
         return {
@@ -108,6 +113,20 @@ def cheap_prefilter(
             ),
             "sensitive": sensitive,
             "unique_source_count": len(unique_domains),
+            "credible_source_count": len(credible_domains),
+            "avg_credibility": avg_credibility,
+        }
+
+    if sensitive and len(credible_domains) < 2:
+        return {
+            "passes": False,
+            "reason": (
+                "sensitive_story_requires_2_independent_tier1_3_domains "
+                f"(have {len(credible_domains)})"
+            ),
+            "sensitive": True,
+            "unique_source_count": len(unique_domains),
+            "credible_source_count": len(credible_domains),
             "avg_credibility": avg_credibility,
         }
 

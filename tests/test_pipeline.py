@@ -29,3 +29,14 @@ def test_demo_dry_run_pipeline_is_idempotent_on_rerun():
         result2 = run_pipeline(dry_run=True, demo_mode=True, db_path=db_path)
 
         assert result2["run"].articles_generated <= articles_first_run + 5
+
+
+def test_rss_topic_assignment_uses_feed_fallback_for_world_news():
+    from src.discovery.candidate_builder import _assign_rss_topic
+
+    topics = [
+        {"id": "topic_international_affairs", "name": "International Affairs", "keywords": []},
+        {"id": "topic_ai", "name": "Artificial Intelligence", "keywords": []},
+    ]
+    item = {"title": "World leaders meet for emergency talks", "summary": "", "feed_topic_hint": "topic_international_affairs"}
+    assert _assign_rss_topic(item, topics)["id"] == "topic_international_affairs"

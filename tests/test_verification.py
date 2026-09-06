@@ -43,3 +43,24 @@ def test_verify_event_group_with_mock_provider():
     result = verify_event_group(group, ai, min_score_to_publish=60)
     assert result["verification_score"] > 0
     assert "recommended_status" in result
+
+
+def test_verify_event_group_exposes_rejection_reason_for_insufficient_sources():
+    ai = MockProvider()
+    group = [{
+        "title": "مقتل شخص في حادث", "summary": "", "domain": "bbc.com",
+        "credibility_score": 0.8, "source_tier": 2, "url": "https://bbc.com/x"
+    }]
+    result = verify_event_group(group, ai, min_score_to_publish=60)
+    assert result["passes_publish_bar"] is False
+    assert "insufficient_source_diversity" in result["reason"]
+
+
+def test_sensitive_story_requires_two_credible_domains():
+    group = [
+        {"title": "اتهام خطير ضد مسؤول", "domain": "bbc.com", "source_tier": 2, "credibility_score": 0.8},
+        {"title": "اتهام خطير ضد مسؤول", "domain": "randomblog.example", "source_tier": 4, "credibility_score": 0.4},
+    ]
+    result = cheap_prefilter(group)
+    assert result["passes"] is False
+    assert "tier1_3" in result["reason"]
