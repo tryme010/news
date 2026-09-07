@@ -40,3 +40,36 @@ def test_rss_topic_assignment_uses_feed_fallback_for_world_news():
     ]
     item = {"title": "World leaders meet for emergency talks", "summary": "", "feed_topic_hint": "topic_international_affairs"}
     assert _assign_rss_topic(item, topics)["id"] == "topic_international_affairs"
+
+
+def test_blogger_html_does_not_render_news_sources():
+    from src.blogger.drafts import build_html
+    from src.database.models import Article
+
+    article = Article(
+        event_id="evt1", website_id="site1", title="عنوان", slug="title",
+        summary="ملخص", body="فقرة أولى\n\nفقرة ثانية",
+    )
+    html = build_html(article, None)
+    assert "المصادر:" not in html
+    assert "example.com" not in html
+
+
+def test_blogger_client_maps_403_to_permission_error(monkeypatch):
+    import requests
+    from src.blogger.client import BloggerClient, BloggerPermissionError
+
+    client = BloggerClient(dry_run=False)
+    monkeypatch.setattr("src.blogger.client.get_access_token", lambda: "token")
+
+    class Resp:
+        status_code = 403
+        text = '{"error":{"message":"The caller does not have permission"}}'
+
+    try:
+        client._raise_for_blogger_error(Resp(), "draft creation", "123")
+    except BloggerPermissionError as exc:
+        assert "does not have permission" in str(exc)
+        assert "auth/blogger" in str(exc)
+    else:
+        raise AssertionError("403 must be mapped to BloggerPermissionError")

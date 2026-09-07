@@ -61,6 +61,20 @@ owns/edits the 10 Blogger blogs, and prints a refresh token. Save it as
 `GOOGLE_REFRESH_TOKEN`. It does not expire under normal use (only if
 revoked or unused for 6 months).
 
+## 6. If you get Blogger 403 PERMISSION_DENIED
+
+A `403: The caller does not have permission` during `posts.insert` is not a news/distribution problem. It means the Google identity used by `GOOGLE_REFRESH_TOKEN` cannot write to that specific Blogger blog, or the refresh token was created without the full Blogger write scope. The code now checks the token scope and blog access before attempting the write.
+
+Fix it in this order:
+
+1. Make sure the Google account used during OAuth is an **owner/admin/editor** of every active Blogger blog.
+2. Regenerate the refresh token using the exact OAuth scope `https://www.googleapis.com/auth/blogger` from the script in Step 5.
+3. Replace the `GOOGLE_REFRESH_TOKEN` GitHub Actions secret with the new token.
+4. Make sure every active `blogger_blog_id` is the ID of a blog that this same Google account can edit.
+5. Run one manual workflow with `DRY_RUN=false`.
+
+The refresh token cannot be upgraded from read-only to write access by changing Python code; Google must issue a new token with the correct scope.
+
 ## 6. Obtain your 10 Blog IDs
 
 For each Blogger blog:
@@ -97,3 +111,9 @@ Every draft created by `src/blogger/client.py::create_draft` passes
 `isDraft=true`. There is no code path in this project that calls the
 Blogger "publish" endpoint. You publish manually from the Blogger
 dashboard after review.
+
+
+## Multi-blog daily quotas
+The pipeline targets 7-15 articles per active blog per day (10 target). Each active blog MUST have its own unique `blogger_blog_id`. The same Google OAuth refresh token may be shared when the same Google account has access to all blogs, but the Blogger blog IDs themselves must be different.
+
+With 10 active blogs the network target is 70-150 articles/day (100 target). With 6 active blogs it is 42-90/day.
