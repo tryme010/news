@@ -11,7 +11,7 @@
   {
     "id": "site_02",
     "name": "Business & Economy",
-    "blogger_blog_id": "5697398899450224441",
+    "blogger_blog_id": "648624038126774379",
     "editorial_focus": ["economy", "markets", "companies", "finance", "trade", "employment"],
     "regions": ["Gulf", "Arab World", "Global"],
     "priority": 2,
@@ -20,7 +20,7 @@
   {
     "id": "site_03",
     "name": "People & Personalities",
-    "blogger_blog_id": "5697398899450224441",
+    "blogger_blog_id": "7928892814596216055",
     "editorial_focus": ["public_figures", "executives", "professionals", "researchers", "creators"],
     "regions": ["Arab World", "Global"],
     "priority": 3,
@@ -29,7 +29,7 @@
   {
     "id": "site_04",
     "name": "Education & Knowledge",
-    "blogger_blog_id": "5697398899450224441",
+    "blogger_blog_id": "1213107390489033438",
     "editorial_focus": ["education", "universities", "research", "science", "learning"],
     "regions": ["Arab World", "Global"],
     "priority": 4,
@@ -38,7 +38,7 @@
   {
     "id": "site_05",
     "name": "Technology",
-    "blogger_blog_id": "5697398899450224441",
+    "blogger_blog_id": "7293804951565313813",
     "editorial_focus": ["ai", "software", "startups", "cybersecurity", "gadgets", "digital_transformation"],
     "regions": ["Global", "Arab World"],
     "priority": 5,
@@ -47,7 +47,7 @@
   {
     "id": "site_06",
     "name": "Culture & Arts",
-    "blogger_blog_id": "5697398899450224441",
+    "blogger_blog_id": "2669728313681552784",
     "editorial_focus": ["art", "entertainment", "books", "cinema", "music", "culture"],
     "regions": ["Arab World", "Global"],
     "priority": 6,
