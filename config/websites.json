@@ -56,7 +56,7 @@
   {
     "id": "site_07",
     "name": "Sports",
-    "blogger_blog_id": "5697398899450224441",
+    "blogger_blog_id": "9103597609311920813",
     "editorial_focus": ["football", "basketball", "tennis", "athletes", "competitions", "sports_business"],
     "regions": ["Arab World", "Global"],
     "priority": 7,
@@ -65,7 +65,7 @@
   {
     "id": "site_08",
     "name": "Health & Life",
-    "blogger_blog_id": "5697398899450224441",
+    "blogger_blog_id": "7202461003040133436",
     "editorial_focus": ["health", "medicine", "wellness", "lifestyle", "public_health"],
     "regions": ["Arab World", "Global"],
     "priority": 8,
@@ -74,7 +74,7 @@
   {
     "id": "site_09",
     "name": "Entrepreneurship & Development",
-    "blogger_blog_id": "5697398899450224441",
+    "blogger_blog_id": "3834335657200247598",
     "editorial_focus": ["startups", "entrepreneurship", "leadership", "careers", "professional_development"],
     "regions": ["Arab World", "Global"],
     "priority": 9,
@@ -83,7 +83,7 @@
   {
     "id": "site_10",
     "name": "Arab & Global",
-    "blogger_blog_id": "5697398899450224441",
+    "blogger_blog_id": "3429661204154500581",
     "editorial_focus": ["arab_world", "international_affairs", "major_events"],
     "regions": ["Arab World", "Gulf", "Global"],
     "priority": 10,
