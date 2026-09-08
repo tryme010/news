@@ -25,36 +25,50 @@ def _ensure_blogger_html(body: str) -> str:
     """Ensure article body is safe, semantic Blogger-compatible HTML."""
     if not body:
         return body
+
     body = body.strip()
+
     # If the model already returned semantic HTML, keep it.
     if re.search(r"<(p|h2|h3|ul|ol|blockquote)\b", body, flags=re.I):
         return body
+
     # Convert simple Markdown headings/lists and paragraphs to HTML.
     lines = [ln.strip() for ln in body.splitlines() if ln.strip()]
     out = []
+
     for ln in lines:
         if ln.startswith("### "):
             out.append(f"<h3>{html.escape(ln[4:])}</h3>")
+
         elif ln.startswith("## "):
             out.append(f"<h2>{html.escape(ln[3:])}</h2>")
+
         elif re.match(r"^[-*]\s+", ln):
             if not out or not out[-1].startswith("<ul>"):
                 out.append("<ul>")
-            out.append(f"<li>{html.escape(re.sub(r'^[-*]\s+', '', ln))}</li>")
+
+            # Keep the regex outside the f-string expression.
+            cleaned = re.sub(r"^[-*]\s+", "", ln)
+            out.append(f"<li>{html.escape(cleaned)}</li>")
+
         else:
-            if out and out[-1] == "</ul>":
-                out.append(f"<p>{html.escape(ln)}</p>")
-            else:
-                out.append(f"<p>{html.escape(ln)}</p>")
-    if "<ul>" in out:
-        # close any open list
-        if out[-1] != "</ul>":
-            out.append("</ul>")
+            out.append(f"<p>{html.escape(ln)}</p>")
+
+    # Close any open list.
+    if "<ul>" in out and out[-1] != "</ul>":
+        out.append("</ul>")
+
     return "".join(out)
 
 
-def generate_article(event: Dict, website: Dict, sources: List[Dict], ai: AIProvider,
-                      min_words: int = 500, max_words: int = 900) -> Dict:
+def generate_article(
+    event: Dict,
+    website: Dict,
+    sources: List[Dict],
+    ai: AIProvider,
+    min_words: int = 500,
+    max_words: int = 900,
+) -> Dict:
     template = (
         _load_prompt_template()
         .replace("{min_words}", str(min_words))
@@ -62,9 +76,14 @@ def generate_article(event: Dict, website: Dict, sources: List[Dict], ai: AIProv
     )
 
     sources_payload = [
-        {"title": s.get("title"), "summary": s.get("summary", "")[:600], "url": s.get("url")}
+        {
+            "title": s.get("title"),
+            "summary": s.get("summary", "")[:600],
+            "url": s.get("url"),
+        }
         for s in sources
     ]
+
     payload = {
         "event_title": event.get("title"),
         "event_summary": event.get("summary"),
@@ -77,9 +96,17 @@ def generate_article(event: Dict, website: Dict, sources: List[Dict], ai: AIProv
         "sources": sources_payload,
     }
 
-    prompt = f"{template}\n\nEVENT + WEBSITE DATA:\n{json.dumps(payload, ensure_ascii=False)}"
+    prompt = (
+        f"{template}\n\n"
+        "EVENT + WEBSITE DATA:\n"
+        f"{json.dumps(payload, ensure_ascii=False)}"
+    )
 
-    result = ai.generate_json(prompt, max_tokens=5000, temperature=0.4)
+    result = ai.generate_json(
+        prompt,
+        max_tokens=5000,
+        temperature=0.4,
+    )
 
     body = result.get("body", "")
     word_count = len(body.split())
