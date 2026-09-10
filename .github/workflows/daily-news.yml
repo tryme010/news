@@ -1,4 +1,3 @@
-```yaml
 name: Daily News Automation
 
 on:
@@ -405,3 +404,4 @@ jobs:
           path: logs/
           retention-days: 14
 ```
+
