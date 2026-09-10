@@ -1,3 +1,4 @@
+```yaml
 name: Daily News Automation
 
 on:
@@ -26,6 +27,7 @@ concurrency:
 jobs:
   run-pipeline:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -45,6 +47,327 @@ jobs:
         run: |
           mkdir -p data logs
           echo "Using repository-backed SQLite state at data/news.db (committed at end of run)."
+
+      # ------------------------------------------------------------
+      # Blogger OAuth diagnostic
+      # ------------------------------------------------------------
+      # This step never prints client secrets, refresh tokens,
+      # or access tokens. It only reports:
+      #   1. OAuth identity (email/sub)
+      #   2. Granted Blogger scope
+      #   3. Whether the OAuth identity can list its Blogger blogs
+      #   4. Whether it can access the first configured blog ID
+      #
+      # The step is intentionally non-blocking so the main pipeline
+      # still runs and produces useful logs in the same workflow run.
+      # ------------------------------------------------------------
+      - name: Diagnose Blogger OAuth access
+        if: ${{ github.event.inputs.demo_mode != 'true' }}
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          BLOGGER_TEST_BLOG_ID: "5697398899450224441"
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import sys
+
+          import requests
+
+          TOKEN_URL = "https://oauth2.googleapis.com/token"
+          TOKENINFO_URL = "https://oauth2.googleapis.com/tokeninfo"
+          USERINFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo"
+          BLOGGER_BASE = "https://www.googleapis.com/blogger/v3"
+          BLOGGER_SCOPE = "https://www.googleapis.com/auth/blogger"
+
+          client_id = os.environ.get("GOOGLE_CLIENT_ID", "").strip()
+          client_secret = os.environ.get("GOOGLE_CLIENT_SECRET", "").strip()
+          refresh_token = os.environ.get("GOOGLE_REFRESH_TOKEN", "").strip()
+          test_blog_id = os.environ.get("BLOGGER_TEST_BLOG_ID", "").strip()
+
+          print("=" * 70)
+          print("BLOGGER OAUTH DIAGNOSTIC")
+          print("=" * 70)
+
+          missing = [
+              name
+              for name, value in (
+                  ("GOOGLE_CLIENT_ID", client_id),
+                  ("GOOGLE_CLIENT_SECRET", client_secret),
+                  ("GOOGLE_REFRESH_TOKEN", refresh_token),
+              )
+              if not value
+          ]
+
+          if missing:
+              print("RESULT: FAIL")
+              print("Missing GitHub secret(s): " + ", ".join(missing))
+              sys.exit(0)
+
+          # ----------------------------------------------------------
+          # 1. Refresh access token.
+          # ----------------------------------------------------------
+          try:
+              token_response = requests.post(
+                  TOKEN_URL,
+                  data={
+                      "client_id": client_id,
+                      "client_secret": client_secret,
+                      "refresh_token": refresh_token,
+                      "grant_type": "refresh_token",
+                  },
+                  timeout=20,
+              )
+          except Exception as exc:
+              print("RESULT: FAIL")
+              print(f"Token request error: {type(exc).__name__}: {exc}")
+              sys.exit(0)
+
+          print(f"Token endpoint HTTP status: {token_response.status_code}")
+
+          if token_response.status_code != 200:
+              print("RESULT: FAIL")
+              print("Google rejected the refresh-token request.")
+              print("Response:")
+              print(token_response.text[:500])
+              sys.exit(0)
+
+          try:
+              token_payload = token_response.json()
+          except Exception:
+              print("RESULT: FAIL")
+              print("Google returned a non-JSON token response.")
+              sys.exit(0)
+
+          access_token = str(token_payload.get("access_token", "")).strip()
+
+          if not access_token:
+              print("RESULT: FAIL")
+              print("Google token response did not contain an access token.")
+              sys.exit(0)
+
+          # ----------------------------------------------------------
+          # 2. Inspect granted OAuth scope.
+          # ----------------------------------------------------------
+          scopes = str(token_payload.get("scope", "")).strip()
+
+          if not scopes:
+              try:
+                  info_response = requests.get(
+                      TOKENINFO_URL,
+                      params={"access_token": access_token},
+                      timeout=15,
+                  )
+
+                  if info_response.ok:
+                      info_payload = info_response.json()
+                      scopes = str(info_payload.get("scope", "")).strip()
+              except Exception:
+                  pass
+
+          scope_set = set(scopes.split())
+
+          print(
+              "Blogger write scope: "
+              + ("YES" if BLOGGER_SCOPE in scope_set else "NO")
+          )
+
+          if scopes:
+              safe_scope_names = []
+              for scope in sorted(scope_set):
+                  if "blogger" in scope.lower():
+                      safe_scope_names.append(scope)
+              print(
+                  "Blogger-related scopes: "
+                  + (", ".join(safe_scope_names) if safe_scope_names else "NONE")
+              )
+          else:
+              print("Granted scopes: UNKNOWN")
+
+          # ----------------------------------------------------------
+          # 3. Identify the Google account behind the OAuth token.
+          # ----------------------------------------------------------
+          headers = {
+              "Authorization": f"Bearer {access_token}",
+              "Accept": "application/json",
+          }
+
+          try:
+              user_response = requests.get(
+                  USERINFO_URL,
+                  headers=headers,
+                  timeout=15,
+              )
+
+              print(f"Google userinfo HTTP status: {user_response.status_code}")
+
+              if user_response.ok:
+                  user_payload = user_response.json()
+
+                  # Email is useful for diagnosing the common case where
+                  # the OAuth account is different from the Blogger admin.
+                  email = str(user_payload.get("email", "")).strip()
+                  verified = user_payload.get("email_verified")
+
+                  print(
+                      "OAuth Google account email: "
+                      + (email if email else "NOT_RETURNED")
+                  )
+
+                  if verified is not None:
+                      print(f"Email verified: {verified}")
+
+                  user_sub = str(user_payload.get("sub", "")).strip()
+                  print(
+                      "OAuth Google account ID: "
+                      + (user_sub if user_sub else "NOT_RETURNED")
+                  )
+              else:
+                  print("Could not read Google userinfo.")
+                  print(user_response.text[:500])
+
+          except Exception as exc:
+              print(
+                  "Google userinfo request error: "
+                  f"{type(exc).__name__}: {exc}"
+              )
+
+          # ----------------------------------------------------------
+          # 4. List Blogger blogs visible to this OAuth identity.
+          # ----------------------------------------------------------
+          print("-" * 70)
+          print("Testing Blogger users/self/blogs ...")
+
+          try:
+              blogs_response = requests.get(
+                  f"{BLOGGER_BASE}/users/self/blogs",
+                  headers=headers,
+                  timeout=20,
+              )
+
+              print(
+                  "Blogger users/self/blogs HTTP status: "
+                  f"{blogs_response.status_code}"
+              )
+
+              if blogs_response.ok:
+                  blogs_payload = blogs_response.json()
+                  blogs = blogs_payload.get("items", [])
+
+                  print(f"Blogs visible to OAuth account: {len(blogs)}")
+
+                  configured_ids = {
+                      "5697398899450224441",
+                      "648624038126774379",
+                      "7928892814596216055",
+                      "1213107390489033438",
+                      "7293804951565313813",
+                      "2669728313681552784",
+                      "9103597609311920813",
+                      "7202461003040133436",
+                      "3834335657200247598",
+                      "3429661204154500581",
+                  }
+
+                  visible_ids = set()
+
+                  for blog in blogs:
+                      blog_id = str(blog.get("id", "")).strip()
+                      blog_name = str(blog.get("name", "")).strip()
+                      blog_url = str(blog.get("url", "")).strip()
+
+                      if blog_id:
+                          visible_ids.add(blog_id)
+
+                      print(
+                          f"  - {blog_id or 'UNKNOWN'}"
+                          f" | {blog_name or 'Unnamed'}"
+                          f" | {blog_url or 'No URL'}"
+                      )
+
+                  matched = configured_ids.intersection(visible_ids)
+
+                  print(
+                      "Configured blogs visible through OAuth: "
+                      f"{len(matched)}/10"
+                  )
+
+                  if matched:
+                      print(
+                          "Matched configured blog IDs: "
+                          + ", ".join(sorted(matched))
+                      )
+                  else:
+                      print(
+                          "WARNING: None of the 10 configured blog IDs "
+                          "are visible to this OAuth account."
+                      )
+
+              else:
+                  print("Blogger users/self/blogs failed.")
+                  print(blogs_response.text[:1000])
+
+          except Exception as exc:
+              print(
+                  "Blogger list request error: "
+                  f"{type(exc).__name__}: {exc}"
+              )
+
+          # ----------------------------------------------------------
+          # 5. Directly test the first configured blog.
+          # ----------------------------------------------------------
+          print("-" * 70)
+          print(f"Testing configured blog ID: {test_blog_id}")
+
+          try:
+              blog_response = requests.get(
+                  f"{BLOGGER_BASE}/blogs/{test_blog_id}",
+                  headers=headers,
+                  timeout=20,
+              )
+
+              print(
+                  f"Blogger blogs/{test_blog_id} HTTP status: "
+                  f"{blog_response.status_code}"
+              )
+
+              if blog_response.ok:
+                  blog_payload = blog_response.json()
+
+                  print("DIRECT BLOG ACCESS: YES")
+                  print(
+                      "Blog name: "
+                      + str(blog_payload.get("name", "UNKNOWN"))
+                  )
+                  print(
+                      "Blog ID returned by API: "
+                      + str(blog_payload.get("id", "UNKNOWN"))
+                  )
+                  print(
+                      "Blog URL: "
+                      + str(blog_payload.get("url", "UNKNOWN"))
+                  )
+              else:
+                  print("DIRECT BLOG ACCESS: NO")
+                  print("Blogger API response:")
+                  print(blog_response.text[:1000])
+
+          except Exception as exc:
+              print(
+                  "Direct Blogger blog request error: "
+                  f"{type(exc).__name__}: {exc}"
+              )
+
+          print("=" * 70)
+          print("BLOGGER OAUTH DIAGNOSTIC COMPLETE")
+          print("=" * 70)
+          print(
+              "This diagnostic does not print the OAuth refresh token "
+              "or access token."
+          )
+          PY
 
       - name: Run news pipeline
         env:
@@ -81,3 +404,4 @@ jobs:
           name: pipeline-logs
           path: logs/
           retention-days: 14
+```
